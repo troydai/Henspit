@@ -58,10 +58,16 @@ def update_history(working_dir, old_version, new_version):
         if line.startswith('*'):
             commit_comments.add(line.lstrip(' *').strip())
     
+    commit_comments = sorted([c for c in commit_comments if c])
+    
     # form history
     release_notes = ['{} ({})\n'.format(new_version, datetime.utcnow().strftime('%Y-%m-%d')), '^^^^^^^^^^^^^^^^^^\n']
-    for comment in commit_comments:
-        release_notes.append('* {}\n'.format(comment.strip(' "')))
+
+    if any(commit_comments): 
+        for comment in commit_comments:
+             release_notes.append('* {}\n'.format(comment.strip(' "')))
+    else:
+        release_notes.append('* no changes\n')
     release_notes.append('\n')
     
     updated_lines = lines[:begin] + release_notes + lines[end:]
